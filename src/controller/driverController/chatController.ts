@@ -1,12 +1,13 @@
 import { RequestHandler } from "express";
 import chatModel from "../../model/passenger/chatModel";
 import passengerModel from "../../model/passenger/passengerModel";
+import requestModel from "../../model/passenger/requestModel";
 
 export const getPassengers: RequestHandler = async (req, res) => {
   try {
     const { userId } = res.locals.decodedToken;
-    const docs = await chatModel.distinct("sender", {
-      $or: [{ sender: userId }, { receiver: userId }],
+    const docs = await requestModel.distinct("sender", {
+      receiver: {$eq: userId},
     });
     const passenger = await passengerModel.find({
       _id: {

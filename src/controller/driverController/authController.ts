@@ -35,7 +35,7 @@ export const register: RequestHandler = async (req, res) => {
             token,
           });
         })
-        .catch((error) => res.status(500).json({ error, status: false }));
+        .catch((error) => res.status(200).json({ error, status: false }));
     }
   } catch (error) {
     res.status(500).send(error);

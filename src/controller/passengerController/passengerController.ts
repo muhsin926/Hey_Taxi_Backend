@@ -108,7 +108,7 @@ export const getScheduledRides: RequestHandler = async (req, res) => {
     const rides = await requestModel
       .find(
         { sender: userId },
-        { schedule: { $ne: "Ride now" }, finished: { $eq: false } }
+        { finished: { $eq: false } }
       )
       .populate("receiver");
     res.status(200).json({ rides: rides });

@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import driverModel from "../../model/driver/driverModel";
 import chatModel from "../../model/passenger/chatModel";
+import requestModel from "../../model/passenger/requestModel";
 
 export const sendMsg: RequestHandler = async (req, res) => {
   const { userId } = res.locals.decodedToken;
@@ -23,8 +24,8 @@ export const sendMsg: RequestHandler = async (req, res) => {
 export const getDrivers: RequestHandler = async (req, res) => {
   try {
     const { userId } = res.locals.decodedToken;
-    const docs = await chatModel.distinct("sender", {
-      $and: [{ senderType: "Driver" }, { receiver: userId }],
+    const docs = await requestModel.distinct("receiver", {
+      sender: {$eq: userId},
     });
     const drivers = await driverModel.find({
       _id: {
