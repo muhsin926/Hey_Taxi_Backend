@@ -209,10 +209,8 @@ export const getBookedTrips: RequestHandler = async (req, res) => {
     const requests = await requestModel
       .find({
         receiver: { $eq: userId },
-        schedule: { $ne: "Ride now" },
         finished: { $ne: true },
       })
-      .sort("-1")
       .populate("sender");
     res.status(200).json({ requests });
   } catch (err) {

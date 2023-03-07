@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("addDriver", (id) => {
-    console.log("driver");
+    console.log("driver", id);
 
     !onlineDriver.get(id) && onlineDriver.set(id, socket.id);
   });
@@ -61,6 +61,8 @@ io.on("connection", (socket) => {
   socket.on("send_msg", (data) => {
     console.log(data);
     const sendDriverSocket = onlineDriver.get(data.to);
+    console.log(sendDriverSocket);
+    
     socket.to(sendDriverSocket).emit("receive_msg", data);
   });
 
