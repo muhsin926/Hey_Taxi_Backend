@@ -58,7 +58,7 @@ export const login: RequestHandler = async (req, res) => {
           .then((checkPass) => {
             if (!checkPass)
               return res
-                .status(400)
+                .status(200)
                 .send({ status: false, error: "Password does not match" });
             const token = generateToken(user);
             return res.status(200).send({
@@ -72,7 +72,7 @@ export const login: RequestHandler = async (req, res) => {
             console.log(error);
 
             res
-              .status(400)
+              .status(200)
               .send({ status: false, error: "Password does not match" });
           });
       })

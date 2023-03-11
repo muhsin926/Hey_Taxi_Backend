@@ -36,5 +36,6 @@ router
   
 router.route("/getShortInfo").get(dashboardController.getShortInfo);
 router.route("/getEarnings").get(dashboardController.getData);
+router.route("/trips").get(dashboardController.getTrips)
 
 export default router;

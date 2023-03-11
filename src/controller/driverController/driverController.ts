@@ -105,7 +105,8 @@ export const updateDriver: RequestHandler = async (req, res) => {
 };
 
 export const getVehicles: RequestHandler = async (req, res) => {
-  const vehicles = await vehicleModel.find({});
+  const {userId } = res.locals.decodedToken
+  const vehicles = await vehicleModel.find({driverId:userId});
   return res.status(200).json({ vehicles: vehicles });
 };
 

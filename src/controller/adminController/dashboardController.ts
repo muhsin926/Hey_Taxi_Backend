@@ -82,13 +82,17 @@ export const getData: RequestHandler = async (req, res) => {
       {
         $match: {
           finished: true,
+          updatedAt: {
+            $gte: new Date("2023-03-01"),
+            $lt: new Date("2023-04-01"),
+          },
         },
       },
       {
         $group: {
           _id: {
             $dateToString: {
-              format: "%Y-%m-%d",
+              format: "%Y-%m-%w",
               date: "$updatedAt",
             },
           },
@@ -100,6 +104,29 @@ export const getData: RequestHandler = async (req, res) => {
     if (earnings) res.status(200).json({ getEarnings: earnings });
   } catch (err) {
     console.log(err);
+    res.status(400);
+  }
+};
+
+export const getTrips: RequestHandler = async (req, res) => {
+  try {
+    const page = req.query.page as string;
+    const limit = 4;
+    const skip: number = parseInt(page) * limit;
+    const countDoc = await requestModel
+      .find({ accepted: true })
+      .countDocuments();
+    const trips = await requestModel
+      .find({ accepted: true })
+      .sort({createAt: 1})
+      .populate("sender")
+      .populate("receiver")
+      .populate("category")
+      .skip(skip)
+      .limit(limit);
+      const pageCount = Math.ceil(countDoc / limit);
+    res.status(200).json({ trips, pageCount });
+  } catch {
     res.status(400);
   }
 };

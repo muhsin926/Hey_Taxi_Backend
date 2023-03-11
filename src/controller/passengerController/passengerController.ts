@@ -103,13 +103,8 @@ export const getAcceptedRequest: RequestHandler = async (req, res) => {
 export const getScheduledRides: RequestHandler = async (req, res) => {
   try {
     const { userId } = res.locals.decodedToken;
-    console.log(userId);
-
     const rides = await requestModel
-      .find(
-        { sender: userId },
-        { finished: { $eq: false } }
-      )
+      .find({ sender: userId }, { finished: { $eq: false } })
       .populate("receiver");
     res.status(200).json({ rides: rides });
   } catch (err) {
@@ -121,8 +116,6 @@ export const getScheduledRides: RequestHandler = async (req, res) => {
 export const getRideHistory: RequestHandler = async (req, res) => {
   try {
     const { userId } = res.locals.decodedToken;
-    console.log(userId);
-
     const rides = await requestModel
       .find({
         sender: { $eq: userId },

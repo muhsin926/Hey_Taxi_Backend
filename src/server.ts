@@ -7,8 +7,7 @@ import passRouter from "./router/passenger/passengerRouter";
 import driverRouter from "./router/driver/driverRouter";
 import adminRouter from "./router/admin/adminRouter";
 import cors from "cors";
-import { Server, Socket } from "socket.io";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { Server } from "socket.io";
 import morgan from "morgan";
 
 const app = express();
@@ -39,47 +38,33 @@ app.use("/api/admin", adminRouter);
 
 const onlineUsers = new Map();
 const onlineDriver = new Map();
-let passengerSocket: Socket<
-  DefaultEventsMap,
-  DefaultEventsMap,
-  DefaultEventsMap,
-  any
->;
+const onlineChaters = new Map();
 io.on("connection", (socket) => {
   // add user to onlineUsers if not already exist
   socket.on("addUser", (id) => {
-    console.log("passenger", id);
     !onlineUsers.get(id) && onlineUsers.set(id, socket.id);
+    !onlineChaters.get(id) && onlineChaters.set(id, socket.id);
   });
 
   socket.on("addDriver", (id) => {
-    console.log("driver", id);
-
     !onlineDriver.get(id) && onlineDriver.set(id, socket.id);
+    !onlineChaters.get(id) && onlineChaters.set(id, socket.id);
   });
 
   socket.on("send_msg", (data) => {
-    console.log(data);
-    const sendDriverSocket = onlineDriver.get(data.to);
-    console.log(sendDriverSocket);
-    
+    const sendDriverSocket = onlineChaters.get(data.to);
     socket.to(sendDriverSocket).emit("receive_msg", data);
   });
 
   // send message to the client
-  socket.on("send-request", (data) => {
-    console.log(data, "passenger");
-    passengerSocket = socket;
-    socket.broadcast.emit("send-request", { data });
+  socket.on("send_request", (data) => {
+    socket.broadcast.emit("receive_request", { data });
   });
 
-  socket.on("ride-accept", (data) => {
-    console.log(data, "Driver");
-
-    if (passengerSocket) {
-      // Emit a ride-accepted event to the specific passenger
-      passengerSocket.emit("ride-accept", data);
-    }
+  socket.on("ride_accept", (data) => {
+    const sendPassengerSocket = onlineUsers.get(data.to._id);
+    // Emit a ride-accepted event to the specific passenger
+    socket.to(sendPassengerSocket).emit("ride_accept", data);
   });
 });
 

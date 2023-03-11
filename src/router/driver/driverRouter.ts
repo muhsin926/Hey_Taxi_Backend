@@ -12,7 +12,7 @@ router
 
 router
   .route("/vehicle")
-  .get(driverController.getVehicles)
+  .get(authCheck, driverController.getVehicles)
   .post(authCheck, driverController.add_vehicle)
   .patch(driverController.updateVehicle)
   .delete(driverController.deleteVehicle);
